@@ -1,5 +1,5 @@
 <template>
-    <main>
+    <main class="container-fluid w-75 mt-3">
         <NavBar/>
         <router-view></router-view>
     </main>
