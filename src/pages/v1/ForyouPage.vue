@@ -23,7 +23,7 @@ export default {
     methods: {
         async fetchPosts() {
             try {
-                this.result = ((await axios.get('http://localhost:8081/api/v1/post')).data)
+                this.result = ((await axios.get('http://localhost:8080/api/v1/post')).data)
                 console.log(this.result)
             } catch (err) {
                 console.log(err)

@@ -26,7 +26,6 @@
 </template>
 
 <script>
-import store from '@/store/store';
 import axios from 'axios';
 
     export default{
@@ -41,17 +40,18 @@ import axios from 'axios';
         methods:{
             async authenticate(){
                 try{
-                    const result = await axios.post('http://localhost:8081/api/v1/user/login', {
+                    const result = await axios.post('http://localhost:8080/api/v1/user/login', {
                         uName: this.uName,
                         password: this.password
                     })
 
                     if(result.data.status !== "error"){
-                        store.dispatch('authUserAction', {
-                            userName: this.uName,
+                        this.$store.dispatch('loginAction', {
+                            uName: this.uName,
                             isAuth: true
                         })
-                        this.$router.push('/v1/for-you')
+                        .then(() => this.$router.push('/v1/for-you'))
+
                     }
                     else{
                         alert("wrong credentials")
@@ -59,7 +59,7 @@ import axios from 'axios';
                 } catch(err) {
                     console.log(err)
                 }
-            },
+            }
         }
     }
 </script>

@@ -7,6 +7,7 @@ import ForyouPage from './pages/v1/ForyouPage.vue';
 import LayoutPage from './pages/LayoutPage.vue';
 import CreatePage from './pages/v1/CreatePage.vue';
 import ProfilePage from './pages/v1/ProfilePage.vue';
+import HomePage from './pages/HomePage.vue';
 import store from './store/store';
 
 Vue.use(VueRouter);
@@ -16,6 +17,10 @@ Vue.config.productionTip = false
 const router = new VueRouter({
   mode:"history",
   routes:[
+    {
+      path:'/',
+      component:HomePage
+    },
     {
       path:'/login',
       component:LoginPage
@@ -45,13 +50,16 @@ const router = new VueRouter({
   ]
 })
 
-// router.beforeEach((to, from, next)=>{
+router.beforeEach((to, from, next)=>{
   
-//   if(to.path !== '/login' && !store.getters.stateIsAuth)
-//     next({ path:'/login'})
-//   else next(true)
+  if(to.path !== '/login' && !store.getters.stateIsAuth)
+    next({ path:'/login'})
+  else if(to.path === '/login' && store.getters.stateIsAuth)
+    next({path: from.path})
+  else
+    next()
 
-// })
+})
 
 new Vue({
   store,

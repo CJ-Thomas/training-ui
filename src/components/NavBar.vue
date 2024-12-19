@@ -1,17 +1,24 @@
 <template>
-    <div class="navbar justify-content-between px-5 border rounded">
+    <div class="navbar justify-content-between px-4 border rounded">
         <div class="monospace font-weight-bold">JASMP</div>
-        <div class="justifu-content-between ">
+        <div>
             <router-link class="nav-item mr-5" to="/v1/for-you">home</router-link>
             <router-link class="nav-item mr-5" to="/v1/create-post">create</router-link>
-            <router-link class="nav-item" to="/v1/profile">profile</router-link>
+            <router-link class="nav-item mr-5" to="/v1/profile">profile</router-link>
+            <span class="text-danger" role="button" @click="logout">logout</span>
         </div>
     </div>
 </template>
 
 <script>
     export default{
-        name:'NavBar'
+        name:'NavBar',
+        methods:{
+            logout(){
+                this.$store.dispatch('logoutAction')
+                .then(() => this.$router.push('/login'))
+            }
+        }
     }
 </script>
 

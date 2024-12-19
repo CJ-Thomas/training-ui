@@ -1,36 +1,44 @@
 const state = {
-    userName: null,
-    isAuth: false
+    userName: localStorage.getItem('userName') || '',
+    isAuth: localStorage.getItem('isAuth') || false
 };
-const getters = {
-    StateUser: state => state.user,
-    StateIsAuth: state => state.isAuth
-};
-const actions = {
-    authUserAction({commit}, userName, isAuth){
-        
-        if(userName !== null || userName !==""){
-            commit('setUser', userName)
 
-            commit('setIsAuth', isAuth)
+const getters = {
+    stateUser: state => state.user,
+    stateIsAuth: state => state.isAuth
+};  
+
+
+const actions = {
+    
+    loginAction({commit}, userAuth){
+        if(userAuth.uName != "" && userAuth.uName != null){
+            commit('setUserAuth', userAuth)
+            localStorage.setItem('userName', userAuth.uName)
+            localStorage.setItem('isAuth', userAuth.isAuth)
         }
+    },
+
+    logoutAction({commit}){
+        commit('unSetUserAuth')
+        localStorage.removeItem('userName')
+        localStorage.removeItem('isAuth')
     }
 };
+
 const mutations = {
 
-    setUser(state, userName){
-        state.userName = userName
+    setUserAuth(state, userAuth){
+        state.userName = userAuth.uName
+        state.isAuth = userAuth.isAuth
     },
 
-    setIsAuth(state, isAuth){
-        state.isAuth = isAuth
-    },
-
-    logOut(state){
+    unSetUserAuth(state){
         state.userName = null,
         state.isAuth = false
     }
 };
+
 
 export default {
     state,
