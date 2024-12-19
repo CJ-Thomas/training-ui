@@ -26,8 +26,8 @@
 </template>
 
 <script>
+import store from '@/store/store';
 import axios from 'axios';
-
 
     export default{
         name:"LoginPage",
@@ -46,7 +46,16 @@ import axios from 'axios';
                         password: this.password
                     })
 
-                    console.log(result)
+                    if(result.data.status !== "error"){
+                        store.dispatch('authUserAction', {
+                            userName: this.uName,
+                            isAuth: true
+                        })
+                        this.$router.push('/v1/for-you')
+                    }
+                    else{
+                        alert("wrong credentials")
+                    }
                 } catch(err) {
                     console.log(err)
                 }
