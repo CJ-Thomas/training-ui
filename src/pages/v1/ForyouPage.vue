@@ -1,6 +1,6 @@
 <template>
     <div class="mt-5">
-        <div v-for="post in this.result" class="d-flex justify-content-center" v-bind:key="post.id">
+        <div v-for="post in this.result" class="" v-bind:key="post.id">
             <PostCard v-bind:post = post />
         </div>
     </div>
@@ -13,22 +13,22 @@ import PostCard from '@/components/PostCard.vue';
 export default {
     name: 'ForyouPage',
     components:{
-        PostCard
+        PostCard,
     },
     data(){
         return{
-            result:[]
+            result:[],
         }
     },
     methods: {
         async fetchPosts() {
             try {
                 this.result = ((await axios.get('http://localhost:8080/api/v1/post')).data)
-                console.log(this.result)
             } catch (err) {
                 console.log(err)
             }
         }
+
     },
     mounted(){
         this.fetchPosts()

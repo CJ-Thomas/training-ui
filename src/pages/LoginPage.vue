@@ -40,13 +40,15 @@ import axios from 'axios';
         methods:{
             async authenticate(){
                 try{
-                    const result = await axios.post('http://localhost:8080/api/v1/user/login', {
+                    const result = (await axios.post('http://localhost:8080/api/v1/user/login', {
                         uName: this.uName,
                         password: this.password
-                    })
+                    })).data
 
-                    if(result.data.status !== "error"){
+                    
+                    if(result.status !== "error"){
                         this.$store.dispatch('loginAction', {
+                            uId: result.id,
                             uName: this.uName,
                             isAuth: true
                         })
