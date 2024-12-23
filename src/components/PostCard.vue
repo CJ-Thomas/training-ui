@@ -1,29 +1,35 @@
 <template>
     <div class="row justify-content-around mb-5">
         <div class="card p-3 col-6" style="width: 30rem;">
-            <img :src=post.post class="rounded card-img-top" />
+            <img :src=post?.content class="rounded card-img-top" />
             <div class="row card-body">
-                <p class="card-text mb-0 mr-auto mt-2 text-wrap col-7 text-left">{{ post.caption }}</p>
+                <p class="card-text mb-0 mr-auto mt-2 text-wrap col-7 text-left">{{ post?.caption }}</p>
                 <div>
-                    <button class="btn mr-2">like: {{ post.total_likes }}</button>
+                    <p></p>
+                    <button :class="{'btn': true, 'btn-outline-primary':!liked, 'btn-danger':liked }" @click="handleLike(post)">like: {{ post?.likedUsers?.length }}</button>
                     <button class="btn" @click="handleFetchComments">comments</button>
                 </div>
             </div>
         </div>
-        <CommentSection :show="showComments" :postId="post.id" ref="childRef" />
+        <CommentSection :show="showComments" :postId="post?.id" ref="childRef" />
     </div>
 </template>
 
 <script>
+import axios from 'axios';
 import CommentSection from './CommentSection.vue';
 export default {
     name: 'PostCard',
     components:{
         CommentSection
     },
+    props: {
+        post: Object
+    },
     data() {
         return {
-            showComments: false
+            showComments: false,
+            liked: false
         }
     },
     methods: {
@@ -39,10 +45,50 @@ export default {
                     console.error("no reference")
                 }
             }
-        }
+        },
+
+        checkUserLike(){
+            this.liked = this.post?.likedUsers
+            .findIndex(like => like.userId === localStorage.getItem('uId')) > -1 ? true : false
+        },
+
+        async handleLike(post){
+            if(this.liked){
+                this.liked = false
+                var like = post?.likedUsers.find(like => like.userId === localStorage.getItem('uId'))
+
+                console.log(like.id)
+                try{
+                    await axios.delete(`http://localhost:8080/api/v1/post/interact/${like.id}`)
+
+                    var removeLike = post?.likedUsers.find(like => like.userId === localStorage.getItem('uId'))
+                    console.log(removeLike)
+                    // eslint-disable-next-line vue/no-mutating-props
+                    this.post.likedUsers = this.post?.likedUsers.filter(likedUser => likedUser.id !== removeLike.id )
+                } catch(err) {
+                    console.log(err)
+                }
+            } else {
+                this.liked = true
+
+                const data = {
+                    userId: localStorage.getItem('uId'),
+                    postId: post.id
+                }
+
+                try{
+                    const result = await axios.post('http://localhost:8080/api/v1/post/interact', data)
+                    // eslint-disable-next-line vue/no-mutating-props
+                    this.post.likedUsers = [ ...this.post?.likedUsers, result.data]
+                } catch(err) {
+                    console.log(err)
+                }
+
+            }
+        },
     },
-    props: {
-        post: Object
+    mounted(){
+        this.checkUserLike()
     }
 }
 </script>

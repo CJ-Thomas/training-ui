@@ -24,6 +24,7 @@ export default {
         async fetchPosts() {
             try {
                 this.result = ((await axios.get('http://localhost:8080/api/v1/post')).data)
+
             } catch (err) {
                 console.log(err)
             }

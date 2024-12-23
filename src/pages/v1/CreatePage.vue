@@ -54,7 +54,10 @@ import axios from 'axios';
 
                 try{
                     await axios.post('http://localhost:8080/api/v1/post', fd)
-                    URL.revokeObjectURL(this.image)
+
+                    this.image = null
+                    this.src = ""
+                    this.caption = ""
                 } catch(err) {
                     console.log(err)
                 }
