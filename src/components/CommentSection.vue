@@ -1,15 +1,19 @@
 <template>
-    <div v-if="show" class="border rounded col-5 p-3">
+    <div v-if="show" class="border rounded col-5 p-3 ">
         <div class="h-100 d-flex flex-column justify-content-between">
-            <div v-if="result.length != 0">
+            <div v-if="result.length != 0" class="comment-container">
                 <div v-for="comment in result" :key="comment.id" class="mb-3 d-flex flex-column justify-content-left">
                     <small class="text-left mb-0">{{ comment.content }}</small>
-                    <small class="text-left" role="button" @click="handleShowReplies">{{ showReply ? "hide replies" : "show replies"}}</small>
-                    <div v-if="showReply && (comment.replies.length !=0)" >
+                    <div class="row p-3 justify-content-start">
+                        <small class="text-left mr-auto" role="button" @click="handleShowReplies(comment.id)">{{ showReplyId === comment.id ? "hide replies" : "show replies"}}</small>
+                        <small class="text-left" role="button" @click="handleReplyTo(comment.id)">reply</small>
+                    </div>
+                    <div v-if="(showReplyId === comment.id) && (comment.replies.length !=0)" >
                         <div v-for="reply in comment.replies" :key="reply.id"  class="d-flex flex-column justify-content-left" >
                             <small class="text-left mb-0">{{ reply.content }}</small>
                         </div>
                     </div>
+                    <span class="border "></span>
                 </div>
             </div>
             <div v-else>
@@ -35,7 +39,8 @@ export default{
     data(){
         return{
             result: [],
-            showReply: false,
+            showReplyId: "",
+            replyToComment:"",
             newComment:""
         }
     },
@@ -49,33 +54,62 @@ export default{
                 console.log(err)
             }
         },
-        handleShowReplies(){
-            this.showReply = !(this.showReply)
+
+        handleReplyTo(id){
+            this.replyToComment = id
+            this.newComment = "@"
         },
 
-        handleAddComment(postId){
+        handleShowReplies(id){
+            if (this.showReplyId === id){
+                this.showReplyId = ""
+            } else {
+                this.showReplyId = id
+            }
+        },
+
+        async handleAddComment(postId){
             if(this.newComment == ""){
                 alert("empty comment")
                 return
             }
 
+            if(this.newComment[0] !== "@")
+                this.replyToComment = ""    
+
             const data = {
                 userId: localStorage.getItem('uId'),
                 postId: postId,
-                content: this.newComment
+                content: this.newComment,
+                parentCommentId: this.replyToComment
             }
             console.log(data)
 
             try{
-                const comment = axios.post("http://localhost:8080/api/v1/comment/", data)
-                console.log(comment)
+                const comment = (await axios.post("http://localhost:8080/api/v1/comment/", data)).data
+                
+                if(this.newComment[0] === '@'){
+                    var commentIndex = this.result.findIndex((comment)=> comment.id === this.replyToComment)
+                    this.result[commentIndex].replies = [...this.result[commentIndex].replies, comment]
+                } else {
+                    this.result = [...this.result, comment]
+                }
+
             } catch(err) {
                 console.log(err)
             }
-
-
+            
             this.newComment = ""
-        }
+            this.replyToComment = ""
+        },
+
+
     },
 }
 </script>
+
+<style scoped>
+    .comment-container{
+        overflow: scroll;
+    }
+</style>
