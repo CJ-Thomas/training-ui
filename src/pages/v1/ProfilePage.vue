@@ -28,42 +28,42 @@
                 </div>
             </div>
         </div>
-        <div v-if="showModal" class="position-absolute">
-            <button class="btn btn-danger" @click="()=>this.showModal = false"> close </button>
-            <div class="">
-                <PostCard :post="focusedPost"/>
-            </div>
-        </div>
+        <ViewPostModal />
     </div>
 </template>
 
 <script>
+import ViewPostModal from '@/components/ViewPostModal.vue';
 import axios from 'axios';
-import PostCard from '@/components/PostCard.vue';
 
 export default {
     name: 'ProfilePage',
     data() {
         return {
-            user: [],
-            focusedPost: {},
-            showModal: false
+            user: {},
         }
     },
     components: {
-        PostCard
+        ViewPostModal
     },
     methods: {
         async fetchUserProfile() {
-            this.user = (await axios.get(`http://localhost:8080/api/v1/user/${localStorage.getItem('uId')}`))
-                .data.userProfile[0]
+
+            try{
+                const result = (await axios.get(`http://localhost:8080/api/v1/user/${localStorage.getItem('uId')}`))
+    
+                this.user = result.data.userProfile[0]
+
+                this.$store.dispatch('initPosts', this.user.posts)
+
+            } catch(err) {
+                console.log(err)
+            }
 
         },
 
         handleViewPost(post) {
-            this.focusedPost = post
-
-            this.showModal = true
+            this.$store.dispatch('focusPost', {post: post, showModal: true})
         }
     },
     mounted() {

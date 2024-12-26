@@ -6,7 +6,8 @@
                 <p class="card-text mb-0 mr-auto mt-2 text-wrap col-7 text-left">{{ post?.caption }}</p>
                 <div>
                     <p></p>
-                    <button :class="{'btn': true, 'btn-outline-primary':!liked, 'btn-danger':liked }" @click="handleLike(post)">like: {{ post?.likedUsers?.length }}</button>
+                    <button :class="{ 'btn': true, 'btn-outline-primary': !liked, 'btn-danger': liked }"
+                        @click="handleLike(post)">like: {{ post?.likedUsers?.length }}</button>
                     <button class="btn" @click="handleFetchComments">comments</button>
                 </div>
             </div>
@@ -18,9 +19,10 @@
 <script>
 import axios from 'axios';
 import CommentSection from './CommentSection.vue';
+
 export default {
     name: 'PostCard',
-    components:{
+    components: {
         CommentSection
     },
     props: {
@@ -33,13 +35,13 @@ export default {
         }
     },
     methods: {
-        handleFetchComments(){
+        handleFetchComments() {
             this.showComments = !(this.showComments)
 
-            if(this.showComments){
+            if (this.showComments) {
                 const commentCommponent = this.$refs.childRef
-    
-                if (commentCommponent){
+
+                if (commentCommponent) {
                     commentCommponent.fetchComments()
                 } else {
                     console.error("no reference")
@@ -47,25 +49,21 @@ export default {
             }
         },
 
-        checkUserLike(){
+        checkUserLike() {
             this.liked = this.post?.likedUsers
-            .findIndex(like => like.userId === localStorage.getItem('uId')) > -1 ? true : false
+                .findIndex(like => like.userId === localStorage.getItem('uId')) > -1 ? true : false
         },
 
-        async handleLike(post){
-            if(this.liked){
+        async handleLike(post) {
+            if (this.liked) {
                 this.liked = false
-                var like = post?.likedUsers.find(like => like.userId === localStorage.getItem('uId'))
 
-                console.log(like.id)
-                try{
+                try {
+                    var like = post?.likedUsers.find(like => like.userId === localStorage.getItem('uId'))
                     await axios.delete(`http://localhost:8080/api/v1/post/interact/${like.id}`)
-
-                    var removeLike = post?.likedUsers.find(like => like.userId === localStorage.getItem('uId'))
-                    console.log(removeLike)
-                    // eslint-disable-next-line vue/no-mutating-props
-                    this.post.likedUsers = this.post?.likedUsers.filter(likedUser => likedUser.id !== removeLike.id )
-                } catch(err) {
+                    
+                    this.$store.dispatch('unLikePost', { post: post, like: like })
+                } catch (err) {
                     console.log(err)
                 }
             } else {
@@ -76,18 +74,18 @@ export default {
                     postId: post.id
                 }
 
-                try{
+                try {
                     const result = await axios.post('http://localhost:8080/api/v1/post/interact', data)
-                    // eslint-disable-next-line vue/no-mutating-props
-                    this.post.likedUsers = [ ...this.post?.likedUsers, result.data]
-                } catch(err) {
+
+                    this.$store.dispatch('likePost', { post: post, like: result.data })
+                } catch (err) {
                     console.log(err)
                 }
 
             }
         },
     },
-    mounted(){
+    mounted() {
         this.checkUserLike()
     }
 }

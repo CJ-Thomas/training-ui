@@ -1,7 +1,7 @@
 <template>
     <div class="mt-5">
-        <div v-for="post in this.result" class="" v-bind:key="post.id">
-            <PostCard v-bind:post = post />
+        <div v-for="post in posts" class="" v-bind:key="post.id">
+            <PostCard :post = post />
         </div>
     </div>
 </template>
@@ -17,13 +17,15 @@ export default {
     },
     data(){
         return{
-            result:[],
+            posts:[],
         }
     },
     methods: {
         async fetchPosts() {
             try {
-                this.result = ((await axios.get('http://localhost:8080/api/v1/post')).data)
+                const result  = await axios.get('http://localhost:8080/api/v1/post')
+                this.$store.dispatch('initPosts', result.data)
+                this.posts = this.$store.getters.getPostsState
 
             } catch (err) {
                 console.log(err)
