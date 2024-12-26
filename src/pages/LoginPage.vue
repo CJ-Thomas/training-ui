@@ -21,7 +21,7 @@
                 </button>
             </div>
         </div>
-        <span class="mt-1 small" >don't have an account?</span>
+        <router-link class="mt-1 small" to="/register">don't have an account?</router-link>
     </div>
 </template>
 

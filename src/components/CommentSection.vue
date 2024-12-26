@@ -1,5 +1,5 @@
 <template>
-    <div v-if="show" class="border rounded col-5 p-3 ">
+    <div v-if="show" class="border rounded col-5 p-3 bg-white">
         <div class="h-100 d-flex flex-column justify-content-between">
             <div v-if="result.length != 0" class="comment-container">
                 <div v-for="comment in result" :key="comment.id">

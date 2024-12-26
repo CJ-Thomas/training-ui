@@ -1,12 +1,11 @@
 <template>
     <div class="container-fluid p-0 profile-container h-100">
         <div class="d-flex py-4">
-            <span
-                class="rounded-pill bg-info monospace font-weight-bold text-center display-3 py-3 px-5 text-white mr-5">
-                P </span>
+            <img :src="user.profilePicture" width="120rem" class="border rounded-circle mr-4">
             <div class="d-flex flex-column justify-content-left">
                 <h5 class="text-left">{{ user.uName }}</h5>
-                <h6 class="mb-auto text-left">{{ user.email }}</h6>
+                <h6 class="text-left">{{ user.email }}</h6>
+                <h6 class="text-left">{{ user.bio }}</h6>
                 <small class="text-left">manage your profile</small>
             </div>
         </div>
@@ -28,7 +27,7 @@
                 </div>
             </div>
         </div>
-        <ViewPostModal />
+        <ViewPostModal v-on:handle-deleted-post="handleDeletedPost" />
     </div>
 </template>
 
@@ -55,7 +54,7 @@ export default {
                 this.user = result.data.userProfile[0]
 
                 this.$store.dispatch('initPosts', this.user.posts)
-
+                
             } catch(err) {
                 console.log(err)
             }
@@ -63,7 +62,11 @@ export default {
         },
 
         handleViewPost(post) {
-            this.$store.dispatch('focusPost', {post: post, showModal: true})
+            this.$store.dispatch('focusPost', { post: post, showModal: true })
+        },
+
+        handleDeletedPost(){
+            this.user.posts = this.$store.getters.getPostsState
         }
     },
     mounted() {

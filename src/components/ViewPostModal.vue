@@ -1,11 +1,13 @@
 <template>
-    <div v-if="this.$store.getters.getShowModalState" class="position-absolute fixed-top w-75 m-auto h-100 col justify-content-center">
-        <div class="row justify-content-between mb-4">
-            <button class="btn btn-danger" @click="handleDelete"> delete post</button>
-            <button class="btn btn-dark" @click="handleCloseModal"> x </button>
+    <div v-if="this.$store.getters.getShowModalState" class="position-absolute container-fluid justify-content-center row fixed-top w-100 m-auto h-100 modal-bg">
+        <div class="w-75">
+            <div class="row justify-content-between mb-3 mt-2">
+                <button class="btn btn-danger" @click="handleDelete"> delete post</button>
+                <button class="btn btn-dark" @click="handleCloseModal"> x </button>
+            </div>
+    
+            <PostCard :post="this.$store.getters.getFocusedPostState"/>
         </div>
-
-        <PostCard :post="this.$store.getters.getFocusedPostState"/>
     </div>
 </template>
 
@@ -27,8 +29,13 @@ export default{
             var post = this.$store.getters.getFocusedPostState
 
             try{
+
                 await axios.delete(`http://localhost:8080/api/v1/post/${post.id}`)
                 this.$store.dispatch('closeModal')
+
+                this.$store.dispatch('deletePost', post)
+
+                this.$emit('handle-deleted-post')
                 
             } catch(err){
                 console.log(err)
@@ -40,3 +47,10 @@ export default{
 
 }
 </script>
+
+<style scoped>
+
+.modal-bg{
+    background-color: rgba(55, 55, 55, 0.5);
+}
+</style>
