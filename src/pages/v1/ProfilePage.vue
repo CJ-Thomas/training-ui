@@ -6,7 +6,7 @@
                 <h5 class="text-left">{{ user.uName }}</h5>
                 <h6 class="text-left">{{ user.email }}</h6>
                 <h6 class="text-left">{{ user.bio }}</h6>
-                <small class="text-left">manage your profile</small>
+                <router-link class="text-left" to="/v1/settings">manage your profile</router-link>
             </div>
         </div>
         <div class="h-100 border rounded">

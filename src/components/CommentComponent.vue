@@ -1,18 +1,26 @@
 <template>
-    <div class="mb-3 d-flex flex-column justify-content-left">
-        <small class="text-left mb-0">{{ comment.content }}</small>
-        <div class="row p-3 justify-content-start">
-            <small class="text-left mr-auto" role="button" @click="handleShowReplies()">
-                {{ showReply? "hide replies" : "show replies" }}
-            </small>
-            <small class="text-left" role="button" @click="handleReplyTo(comment.id)">reply</small>
-        </div>
-        <div v-if="(showReply) && (comment.replies.length != 0)">
-            <div v-for="reply in comment.replies" :key="reply.id" class="d-flex flex-column justify-content-left">
-                <small class="text-left mb-0">{{ reply.content }}</small>
+    <div class="row border-bottom justify-content-between">
+        <img :src="comment.profilePicture" class="rounded-circle border" width="50rem" height="50rem" />
+        <div class="mb-3 col-10">
+            <small class="text-left row">{{ comment.userName }}</small>
+            <small class="text-left row">{{ comment.content }}</small>
+            <div class="row justify-content-between">
+                <small class="text-left" role="button" @click="handleShowReplies()">
+                    {{ showReply ? "hide replies" : "show replies" }}
+                </small>
+                <small class="text-left" role="button"
+                    @click="handleReplyTo(comment.id, comment.userName)">reply</small>
+            </div>
+            <div v-if="(showReply) && (comment.replies.length != 0)" class="mt-2">
+                <div v-for="reply in comment.replies" :key="reply.id" class="row">
+                    <img :src="reply.profilePicture" class="rounded-circle border mr-3" width="38rem" height="38rem" />
+                    <div class="row">
+                        <small class="text-left mb-0 col-12">{{ reply.userName }}</small>
+                        <small class="text-left mb-0 col-12">{{ reply.content }}</small>
+                    </div>
+                </div>
             </div>
         </div>
-        <span class="border "></span>
     </div>
 </template>
 
@@ -27,13 +35,14 @@ export default {
             showReply: false
         }
     },
-    methods:{
-        handleShowReplies(){
+    methods: {
+        handleShowReplies() {
+            console.log(this.comment)
             this.showReply = !this.showReply
         },
 
-        handleReplyTo(id){
-            this.$emit('reply-to-comment', id)
+        handleReplyTo(id, uName) {
+            this.$emit('reply-to-comment', id, uName)
         }
 
     }

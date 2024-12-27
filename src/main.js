@@ -9,6 +9,7 @@ import CreatePage from './pages/v1/CreatePage.vue';
 import ProfilePage from './pages/v1/ProfilePage.vue';
 import HomePage from './pages/HomePage.vue';
 import store from './store/store';
+import SettingsPage from './pages/v1/SettingsPage.vue';
 
 Vue.use(VueRouter);
 Vue.config.productionTip = false
@@ -44,6 +45,10 @@ const router = new VueRouter({
         {
           path:'profile',
           component: ProfilePage
+        },
+        {
+          path:'settings',
+          component: SettingsPage
         }
       ]
     }

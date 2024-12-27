@@ -2,7 +2,7 @@
     <div v-if="show" class="border rounded col-5 p-3 bg-white">
         <div class="h-100 d-flex flex-column justify-content-between">
             <div v-if="result.length != 0" class="comment-container">
-                <div v-for="comment in result" :key="comment.id">
+                <div v-for="comment in result" :key="comment.id" class="col-12 p-3">
                     <CommentComponent :comment="comment" v-on:reply-to-comment = "handleReplyTo"/>
                 </div>
             </div>
@@ -46,10 +46,10 @@ export default{
             }
         },
 
-        handleReplyTo(id){
+        handleReplyTo(id, uName){
             console.log(id)
             this.replyToComment = id
-            this.newComment = "@"
+            this.newComment = `@${uName}`
         },
 
         async handleAddComment(postId){
@@ -94,7 +94,13 @@ export default{
 </script>
 
 <style scoped>
-    .comment-container{
-        overflow: scroll;
-    }
+.comment-container{
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;
+  height: 28rem;
+  overflow-y: scroll;
+}
+.comment-container::-webkit-scrollbar{
+    display: none;
+}
 </style>
