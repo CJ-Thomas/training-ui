@@ -47,10 +47,14 @@ import axios from 'axios';
 
                     
                     if(result.status !== "error"){
+
+                        console.log(result)
                         this.$store.dispatch('loginAction', {
                             uId: result.id,
                             uName: this.uName,
-                            isAuth: true
+                            isAuth: true,
+                            bio: result.bio,
+                            email: result.email
                         })
                         .then(() => this.$router.push('/v1/for-you'))
 
