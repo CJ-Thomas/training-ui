@@ -3,7 +3,11 @@
         <div class="h-100 d-flex flex-column justify-content-between">
             <div v-if="result.length != 0" class="comment-container">
                 <div v-for="comment in result" :key="comment.id" class="col-12 p-3">
-                    <CommentComponent :comment="comment" v-on:reply-to-comment = "handleReplyTo"/>
+                    <CommentComponent 
+                        :comment="comment" 
+                        v-on:reply-to-comment = "handleReplyTo" 
+                        v-on:delete-comment = "handleDelete"
+                    />
                 </div>
             </div>
             <div v-else>
@@ -88,6 +92,18 @@ export default{
             this.replyToComment = ""
         },
 
+        async handleDelete(id){
+            try{
+                await axios.delete(`http://localhost:8080/api/v1/comment/${id}`)
+
+                // var commentIndex = this.result.findIndex((comment)=> comment.id === this.replyToComment)
+
+                this.result = this.result.filter(comment => comment.id !== id)
+
+            } catch(err) {
+                console.log(err)
+            }
+        }
 
     },
 }

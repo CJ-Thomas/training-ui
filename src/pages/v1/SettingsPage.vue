@@ -42,7 +42,7 @@
                 </div>
             </div>
             <div class="col-12 justify-content-center">
-                <button v-if="editUserName || editEmail || editBio" class="btn btn-success col-2">save changes</button>
+                <button v-if="editUserName || editEmail || editBio" class="btn btn-success col-2" @click="handleSaveChanges">save changes</button>
             </div>
         </div>
         <span class="border row mx-3 my-4" ></span>
@@ -53,7 +53,8 @@
                 </div>
             </div>
             <div class="col-6 mb-5">
-                <input class="col-12 form-control" v-model="newPassword" type="password" placeholder="new password"/>
+                <button v-if="newPassword === confirmNewPassword && newPassword!==''" class="col-12 btn btn-outline-danger">cancel</button>
+                <input v-else class="col-12 form-control" v-model="newPassword" type="password" placeholder="new password"/>
             </div>
 
             <div class="col-6 mb-5">
@@ -62,12 +63,13 @@
             </div>
         </div>
         <span role="button" class="row p-3 mt-5 justify-content-center text-danger" @click="handleDeleteAccount" >Delete account</span>
-        <PasswordModal :showModal = "showModal" v-on:cancel-request="handleCancel" v-on:submit-request="handleSubmit" />
+        <PasswordModal :showModal = "showModal" v-on:cancel-request="handleCancelEdit" v-on:submit-request="handleSubmit" />
     </div>
 </template>
 
 <script>
 import PasswordModal from '@/components/PasswordModal.vue';
+import axios from 'axios';
 
 
 export default {
@@ -78,16 +80,16 @@ export default {
     data(){
         return{
             editUserName:false,
-            newUserName:"",
+            newUserName:this.$store.getters.stateUser,
             editEmail:false,
-            newEmail:"",
+            newEmail: this.$store.getters.stateEmail,
             editBio:false,
-            newBio:"",
+            newBio: this.$store.getters.stateBio,
             showModal: false,
-            password:"",
             currentPassword:"",
             newPassword:"",
-            confirmNewPassword:""
+            confirmNewPassword:"",
+            action:"EDIT"
         }
     },
     methods:{
@@ -99,6 +101,7 @@ export default {
                 this.newUserName = ""
             }
         },
+
         handleEmail(){
             if(this.editEmail){
                 this.editEmail = false
@@ -107,32 +110,78 @@ export default {
                 this.newEmail = ""
             }
         },
+
         handleBio(){
             if(this.editBio){
                 this.editBio = false
             } else {
                 this.editBio = true
-                this.newBio = ""
+                this.newBio = this.$store.getters.stateBio
             }
         },
 
-        async handleDeleteAccount(){
+        handleDeleteAccount(){
             this.showModal = true
+            this.action = "DELETE"
         },
 
-        handleSubmit(password){
-            this.password = password
+        async handleSubmit(password){
+            if(this.action === "EDIT"){
+                var editedData = {}
+
+                if(this.editUserName)
+                    editedData = { ...editedData, uName: this.newUserName }
+
+                if(this.editEmail)
+                    editedData = { ...editedData, email: this.newEmail }
+
+                if(this.editBio)
+                    editedData = { ...editedData, bio: this.newBio }
+
+                try{
+
+                    await axios.put(`http://localhost:8080/api/v1/user/${this.$store.getters.stateUId}`,{
+                        ...editedData,
+                        password: password
+                    })
+
+                    alert("you will have to login again for the changes to take effect")
+                    this.$store.dispatch('logoutAction')
+                    this.$router.push('/login')
+
+                    
+                } catch (err) {
+                    console.log(err)
+                }
+                
+            } else if(this.action === "DELETE") {
+                try{
+                    await axios.delete(`http://localhost:8080/api/v1/user/${this.$store.getters.stateUId}`, {
+                        data: {
+                            password
+                        }
+                    })
+                    this.$store.dispatch('logoutAction')
+                    this.$router.push('/login')
+                } catch (err) {
+                    console.log(err)
+                }
+            }
+            
+
         },
 
-        handleCancel(){
-            this.showModal = false
-            this.editUserName=false,
-            this.newUserName="",
-            this.editEmail=false,
-            this.newEmail="",
-            this.editBio=false,
-            this.newBio="",
-            this.showModal= false
+        handleSaveChanges(){
+            this.showModal = true
+            this.action = "EDIT"
+        },
+
+        handleCancelEdit(){
+            Object.assign(this.$data, this.$options.data.apply(this))
+        },
+
+        handleCancelPassword(){
+
         }
     }
 }

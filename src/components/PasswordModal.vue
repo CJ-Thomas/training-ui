@@ -1,6 +1,6 @@
 <template>
     <div v-if="showModal" class="position-absolute container-fluid justify-content-center row fixed-top w-100 m-auto h-100 modal-bg">
-        <div class="w-50 container h-50 p-5 bg-white rounded mt-5">
+        <div class="w-50 p-5 bg-white rounded m-auto">
             <p class="justify-content-center mb-3">
                 if you are sure that u want to delete your account<br/>
                 type your password here
@@ -18,7 +18,7 @@
 export default{
     name:'PasswordModal',
     props:{
-        showModal: Boolean
+        showModal: Boolean,
     },
     data(){
         return{
