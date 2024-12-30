@@ -98,7 +98,7 @@ export default {
                 this.editUserName = false
             } else {
                 this.editUserName = true
-                this.newUserName = ""
+                this.newUserName = this.$store.getters.stateUser
             }
         },
 
@@ -107,7 +107,7 @@ export default {
                 this.editEmail = false
             } else {
                 this.editEmail = true
-                this.newEmail = ""
+                this.newEmail = this.$store.getters.stateEmail
             }
         },
 
@@ -180,8 +180,14 @@ export default {
             Object.assign(this.$data, this.$options.data.apply(this))
         },
 
-        handleCancelPassword(){
+        handleChangePassword(){
 
+        },
+
+        handleCancelPassword(){
+            this.currentPassword = ""
+            this.newPassword = ""
+            this.confirmNewPassword = ""
         }
     }
 }

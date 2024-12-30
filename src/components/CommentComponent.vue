@@ -25,18 +25,26 @@
                 </div>
             </div>
             <div v-if="(showReply) && (comment.replies.length != 0)" class="mt-2">
-                <div v-for="reply in comment.replies" :key="reply.id" class="row">
+                <div v-for="reply in comment.replies" :key="reply.id" class="row border-bottom mb-3">
                     <img :src="reply.profilePicture" class="rounded-circle border mr-3" width="38rem" height="38rem" />
-                    <div class="row">
-                        <small class="text-left mb-0 col-11">{{ reply.userName }}</small>
-                        <small class="text-left mb-0 col-11">{{ reply.content }}</small>
-                        <small
-                        v-if="reply.userId === $store.getters.stateUId"
-                        class="text-right" 
-                        role="button"
-                        @click="handleDelete(reply.id)">
-                        delete
-                    </small>
+                    <div class="mb-3 col-9">
+                        <small class="text-left row">{{ reply.userName }}</small>
+                        <small class="text-left row">{{ reply.content }}</small>
+                        <div class="row justify-content-between">
+                            <small 
+                                class="text-left mr-3" 
+                                role="button"
+                                @click="handleReplyTo(comment.id, reply.userName)">
+                                reply
+                            </small>
+                            <small
+                                v-if="reply.userId === $store.getters.stateUId"
+                                class="text-left" 
+                                role="button"
+                                @click="handleDelete(reply.id)">
+                                delete
+                            </small>
+                        </div>
                     </div>
                 </div>
             </div>

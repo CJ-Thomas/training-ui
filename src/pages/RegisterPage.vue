@@ -83,7 +83,9 @@ import axios from 'axios';
                         this.$store.dispatch('loginAction', {
                             uId: result.data.id,
                             uName: this.uName,
-                            isAuth: true
+                            isAuth: true,
+                            bio: result.data.bio,
+                            email: result.data.email
                         })
                         .then(() => this.$router.push('/v1/for-you'))
 
