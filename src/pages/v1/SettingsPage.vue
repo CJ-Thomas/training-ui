@@ -53,12 +53,12 @@
                 </div>
             </div>
             <div class="col-6 mb-5">
-                <button v-if="newPassword === confirmNewPassword && newPassword!==''" class="col-12 btn btn-outline-danger">cancel</button>
+                <button v-if="newPassword === confirmNewPassword && newPassword!==''" class="col-12 btn btn-outline-danger" @click="handleCancelPassword">cancel</button>
                 <input v-else class="col-12 form-control" v-model="newPassword" type="password" placeholder="new password"/>
             </div>
 
             <div class="col-6 mb-5">
-                <button v-if="newPassword === confirmNewPassword && newPassword!==''" class="col-12 btn btn-outline-success">change passsword</button>
+                <button v-if="newPassword === confirmNewPassword && newPassword!==''" class="col-12 btn btn-outline-success" @click="handleChangePassword">change passsword</button>
                 <input v-else class="col-12 form-control" v-model="confirmNewPassword" type="password" placeholder="confirm new password"/>
             </div>
         </div>
@@ -180,8 +180,22 @@ export default {
             Object.assign(this.$data, this.$options.data.apply(this))
         },
 
-        handleChangePassword(){
+        async handleChangePassword(){
+            if(this.newPassword === this.confirmNewPassword){
+                try{
+                    await axios.put(`http://localhost:8080/api/v1/user/${this.$store.getters.stateUId}/change-password`,{
+                            currentPassword: this.currentPassword,
+                            newPassword: this.newPassword,
+                            confirmNewPassword: this.confirmNewPassword
+                    })
+                    alert("you will have to login again!")
+                    this.$store.dispatch('logoutAction')
+                    this.$router.push('/login')
 
+                } catch(err) {
+                    console.log(err)
+                }
+            }
         },
 
         handleCancelPassword(){
